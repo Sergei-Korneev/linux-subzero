@@ -10,10 +10,13 @@
 ***
 
 The idea came to my head one day when I got pissed off by my CPU consuming 100% and heating up to 100 deg Celsius (that was Firefox of course ;)).         
+
 So I decided to write some simple  software to stop this.
+
 This bash script sends CONT signal to the all processes spawned by the window you are clicking on, and STOP signal to previous window with its processes.  
 
 Pros: Less CPU and battery consuming.
+
 Cons: Some background processes such as firefox may also stop their useful activity (e.g. downloading something).
 
 ## Installation
