@@ -21,7 +21,7 @@ interval=1
 
 
 
-normal (){
+all (){
 while true 
    do 
      cur="$(xdotool getwindowfocus getwindowpid)"
