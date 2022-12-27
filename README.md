@@ -29,6 +29,6 @@ This bash script sends CONT signal to the all processes spawned by the window yo
 
 - chmod +x subzero.sh 
 
-- run ./subzero.sh normal or subzero.sh unfreeze to unfreeze all windows 
+- run ./subzero all (stop also parent processes); ./subzero.sh normal (stop only spawned); or subzero.sh unfreeze to unfreeze all windows 
 
 I have tested it on Fedora + i3 
