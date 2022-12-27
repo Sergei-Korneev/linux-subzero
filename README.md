@@ -21,7 +21,7 @@ This bash script sends CONT signal to the all processes spawned by the window yo
 
 **Pros:** Less CPU and battery consuming.
 
-**Cons:** Some background processes such as firefox may also stop their useful activity (e.g. downloading something).
+**Cons:** Some background processes such as firefox may also stop their useful activities (e.g. downloading something).
 
 ## Installation
 
