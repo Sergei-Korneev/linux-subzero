@@ -50,7 +50,7 @@ while true
 
 
 
-parent (){
+normal (){
 while true 
    do 
      cur="$(xdotool getwindowfocus getwindowpid)"
