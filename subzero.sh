@@ -34,13 +34,13 @@ while true
        ---
        "
 
-       if  ps -p "$cur" >/dev/null ; then
-         kill -CONT "$cur"  >/dev/null  
-         pgrep -P "$cur"  | while read F; do  kill -CONT "$F" >/dev/null ;done
+       if  ps -p "$cur" >/dev/null 2>&1; then
+         kill -CONT "$cur"  >/dev/null 2>&1 
+         pgrep -P "$cur"  | while read F; do  kill -CONT "$F" >/dev/null 2>&1;done
        fi
-       if  ps -p "$prev" >/dev/null ; then
-         kill -STOP "$prev" >/dev/null 
-         pgrep -P "$prev"  | while read F; do  kill -STOP "$F" >/dev/null ;done
+       if  ps -p "$prev" >/dev/null 2>&1; then
+         kill -STOP "$prev" >/dev/null 2>&1
+         pgrep -P "$prev"  | while read F; do  kill -STOP "$F" >/dev/null 2>&1;done
        fi
        prev=$cur
      fi
@@ -81,9 +81,9 @@ while true
 
      if ! [ "[$prev" == "[$cur" ]; then
        echo Unfreezing "$cur" 
-       if  ps -p "$cur" >/dev/null ; then
-         kill -CONT "$cur"  >/dev/null  
-         pgrep -P "$cur"  | while read F; do  kill -CONT "$F" >/dev/null ;done
+       if  ps -p "$cur" >/dev/null 2>&1; then
+         kill -CONT "$cur"  >/dev/null 2>&1 
+         pgrep -P "$cur"  | while read F; do  kill -CONT "$F" >/dev/null 2>&1;done
        fi
        prev=$cur
      fi
