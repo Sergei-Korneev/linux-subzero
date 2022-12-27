@@ -81,7 +81,10 @@ while true
 
      if ! [ "[$prev" == "[$cur" ]; then
        echo Unfreezing "$cur" 
-          pgrep -P "$prev"  | while read F; do kill -STOP "$F";done
+       if  ps -p "$cur" >/dev/null ; then
+         kill -CONT "$cur"  >/dev/null  
+         pgrep -P "$cur"  | while read F; do  kill -CONT "$F" >/dev/null ;done
+       fi
        prev=$cur
      fi
      sleep $interval
