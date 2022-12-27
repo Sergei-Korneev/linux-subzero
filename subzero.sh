@@ -26,9 +26,14 @@ while true
      cur="$(xdotool getwindowfocus getwindowpid)"
      if ! [ "[$prev" == "[$cur" ]; then
 
-       echo Unfreezing "$cur" Freezing "$prev"
-          pgrep -P "$cur"  | while read F; do kill -CONT "$F";done
-                pgrep -P "$prev"  | while read F; do  kill -STOP "$F";done
+       echo "
+       ---
+       Unfreezing "$cur"
+       Freezing "$prev"
+       ---
+       "
+       pgrep -P "$cur"  | while read F; do kill -CONT "$F";done
+       pgrep -P "$prev"  | while read F; do  kill -STOP "$F";done
 
        prev=$cur
      fi
