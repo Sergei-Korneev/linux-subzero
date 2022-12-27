@@ -16,7 +16,7 @@ cd "$DIR"
 
 
 
-prev="null_"
+prev="null"
 interval=1
 
 
@@ -28,11 +28,8 @@ while true
 
        echo Unfreezing "$cur" 
           pgrep -P "$cur"  | while read F; do kill -CONT "$F";done
-          
-          if ps -p "$prev"  >/dev/null ; then
               echo Freezing "$prev"
-              pgrep -P "$prev"  | while read F; do kill -STOP "$F";done
-          fi
+                pgrep -P "$prev"  | while read F; do kill -STOP "$F";done
 
        prev=$cur
      fi
