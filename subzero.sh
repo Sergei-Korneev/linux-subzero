@@ -18,7 +18,36 @@ cd "$DIR"
 
 prev="null"
 interval=1
+kill_interval=5
 
+stop_all_async (){
+
+     cur="$(xdotool getwindowfocus getwindowpid)"
+     if ! [ "[$1" == "[$cur" ]; then
+
+        sleep $kill_interval
+
+       if  ps -p "$1" >/dev/null 2>&1; then
+        echo Stop all async "$1"
+         kill -STOP "$1" >/dev/null 2>&1
+        pgrep -P "$1"  | while read F; do  kill -STOP "$F";done
+       fi
+     fi
+}
+
+stop_spawned_async (){
+
+     cur="$(xdotool getwindowfocus getwindowpid)"
+     if ! [ "[$1" == "[$cur" ]; then
+
+        sleep $kill_interval
+
+       if  ps -p "$1" >/dev/null 2>&1; then
+        echo Stop spawned async "$1"
+        pgrep -P "$1"  | while read F; do  kill -STOP "$F";done
+       fi
+     fi
+}
 
 
 all (){
@@ -30,7 +59,6 @@ while true
        echo "
        ---
        Unfreezing "$cur"
-       Freezing "$prev"
        ---
        "
 
@@ -59,12 +87,11 @@ while true
        echo "
        ---
        Unfreezing "$cur"
-       Freezing "$prev"
        ---
        "
        pgrep -P "$cur"  | while read F; do kill -CONT "$F";done
-       pgrep -P "$prev"  | while read F; do  kill -STOP "$F";done
-
+       #pgrep -P "$prev"  | while read F; do  kill -STOP "$F";done
+       stop_spawned_async "$prev"
        prev=$cur
      fi
      sleep $interval
