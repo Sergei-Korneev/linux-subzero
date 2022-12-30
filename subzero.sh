@@ -66,10 +66,7 @@ while true
          kill -CONT "$cur"  >/dev/null 2>&1 
          pgrep -P "$cur"  | while read F; do  kill -CONT "$F" >/dev/null 2>&1;done
        fi
-       if  ps -p "$prev" >/dev/null 2>&1; then
-         kill -STOP "$prev" >/dev/null 2>&1
-         pgrep -P "$prev"  | while read F; do  kill -STOP "$F" >/dev/null 2>&1;done
-       fi
+         stop_all_async "$prev"
        prev=$cur
      fi
      sleep $interval
