@@ -17,8 +17,8 @@ cd "$DIR"
 
 
 prev="null"
-interval=1
-kill_interval=5
+interval=0.4
+kill_interval=3
 
 stop_all_async (){
 
@@ -31,7 +31,7 @@ stop_all_async (){
 
        if  ps -p "$1" >/dev/null 2>&1; then
         echo "Stop all async "$1" "$(ps -p "$1" -o comm=)""
-        notify-send "Stop all async "$1" "$(ps -p "$1" -o comm=)""
+        #notify-send -t 1500 "Stop all async "$1" "$(ps -p "$1" -o comm=)""
          kill -STOP "$1" >/dev/null 2>&1
         pgrep -P "$1"  | while read F; do  kill -STOP "$F";done
        fi
@@ -49,7 +49,7 @@ stop_spawned_async (){
 
        if  ps -p "$1" >/dev/null 2>&1; then
 	       echo "Stop spawned async "$1" "$(ps -p "$1" -o comm=)""
-	       notify-send "Stop spawned async "$1" "$(ps -p "$1" -o comm=)""
+	       #notify-send -t 1500 "Stop spawned async "$1" "$(ps -p "$1" -o comm=)""
         pgrep -P "$1"  | while read F; do  kill -STOP "$F";done
        fi
      fi
