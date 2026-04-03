@@ -18,19 +18,21 @@ cd "$DIR"
 
 prev="null"
 interval=0.4
-kill_interval=3
+kill_interval=1
+exclusions=("blueman-manager" "easyeffects" "kitty" "bash" "nautilus")
 
 stop_all_async (){
 
      if [ -z "$1" ];then return 1;fi
-
      cur="$(xdotool getwindowfocus getwindowpid)"
      if ! [ "[$1" == "[$cur" ]; then
 
         sleep $kill_interval
 
        if  ps -p "$1" >/dev/null 2>&1; then
-        echo "Stop all async "$1" "$(ps -p "$1" -o comm=)""
+        cmdline="$(ps -p "$1" -o comm=)"
+        [[ "${exclusions[@]}" =~ "${cmdline}" ]] && return 0;
+        echo "Stop all async "$1" "$cmdline""
         #notify-send -t 1500 "Stop all async "$1" "$(ps -p "$1" -o comm=)""
          kill -STOP "$1" >/dev/null 2>&1
         pgrep -P "$1"  | while read F; do  kill -STOP "$F";done
@@ -48,7 +50,9 @@ stop_spawned_async (){
         sleep $kill_interval
 
        if  ps -p "$1" >/dev/null 2>&1; then
-	       echo "Stop spawned async "$1" "$(ps -p "$1" -o comm=)""
+		cmdline="$(ps -p "$1" -o comm=)"
+		[[ "${exclusions[@]}" =~ "${cmdline}" ]] && return 0;
+	       echo "Stop spawned async "$1" "$cmdline""
 	       #notify-send -t 1500 "Stop spawned async "$1" "$(ps -p "$1" -o comm=)""
         pgrep -P "$1"  | while read F; do  kill -STOP "$F";done
        fi
