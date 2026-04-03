@@ -17,12 +17,12 @@ cd "$DIR"
 
 
 prev="null"
-interval=0.4
-kill_interval=1
-exclusions=("blueman-manager" "easyeffects" "kitty" "bash" "nautilus")
+interval=0.2
+kill_interval=5
+exclusions=()
+
 
 stop_all_async (){
-
      if [ -z "$1" ];then return 1;fi
      cur="$(xdotool getwindowfocus getwindowpid)"
      if ! [ "[$1" == "[$cur" ]; then
@@ -30,48 +30,51 @@ stop_all_async (){
         sleep $kill_interval
 
        if  ps -p "$1" >/dev/null 2>&1; then
-        cmdline="$(ps -p "$1" -o comm=)"
+        cmdline="$(ps -p "$1" -o comm= )"
         [[ "${exclusions[@]}" =~ "${cmdline}" ]] && return 0;
-        echo "Stop all async "$1" "$cmdline""
-        #notify-send -t 1500 "Stop all async "$1" "$(ps -p "$1" -o comm=)""
+         echo "Stop all async "$1" "$cmdline""
          kill -STOP "$1" >/dev/null 2>&1
-        pgrep -P "$1"  | while read F; do  kill -STOP "$F";done
+	 pgrep -P "$1" --signal STOP
        fi
      fi
 }
 
 stop_spawned_async (){
-     
-     if [ -z :$1: ];then return 1;fi
-
+     if [ -z "$1" ];then return 1;fi
      cur="$(xdotool getwindowfocus getwindowpid)"
      if ! [ "[$1" == "[$cur" ]; then
-
         sleep $kill_interval
-
        if  ps -p "$1" >/dev/null 2>&1; then
-		cmdline="$(ps -p "$1" -o comm=)"
+		cmdline="$(ps -p "$1" -o comm= )"
 		[[ "${exclusions[@]}" =~ "${cmdline}" ]] && return 0;
 	       echo "Stop spawned async "$1" "$cmdline""
-	       #notify-send -t 1500 "Stop spawned async "$1" "$(ps -p "$1" -o comm=)""
-        pgrep -P "$1"  | while read F; do  kill -STOP "$F";done
+        pgrep -P "$1"  --signal -STOP
        fi
      fi
 }
 
+cont_process(){
+	if [ -z "$1" ];then return 1;fi
+	echo "Unfreezing "$1" "$(ps -p "$1" -o comm=)""
+	pgrep -P "$1" --signal CONT >/dev/null 2>&1 
+	kill -CONT "$1"  >/dev/null 2>&1 
+}
+
+set_exclusions(){
+if [ ! -z "$1" ];then
+	echo "Setting exclusions $@"
+	exclusions=($@)
+fi
+}
 
 all (){
+set_exclusions $@
 while true 
    do 
      cur="$(xdotool getwindowfocus getwindowpid)"
      if ! [ "[$prev" == "[$cur" ]; then
-
-       echo "Unfreezing "$cur" "$(ps -p "$cur" -o comm=)""
-       if  ps -p "$cur" >/dev/null 2>&1; then
-         kill -CONT "$cur"  >/dev/null 2>&1 
-         pgrep -P "$cur"  | while read F; do  kill -CONT "$F" >/dev/null 2>&1;done
-       fi
-         stop_all_async "$prev"
+	cont_process "$cur" &
+	stop_all_async "$prev" &
        prev=$cur
      fi
      sleep $interval
@@ -81,14 +84,13 @@ while true
 
 
 normal (){
+set_exclusions $@
 while true 
    do 
      cur="$(xdotool getwindowfocus getwindowpid)"
      if ! [ "[$prev" == "[$cur" ]; then
-
-       echo "Unfreezing "$cur"  "$(ps -p "$cur" -o comm=)""
-       pgrep -P "$cur"  | while read F; do kill -CONT "$F";done
-       stop_spawned_async "$prev"
+	cont_process "$cur" &
+	stop_spawned_async "$prev" &
        prev=$cur
      fi
      sleep $interval
@@ -102,12 +104,9 @@ unfreeze (){
 while true 
    do 
      cur="$(xdotool getwindowfocus getwindowpid)"
-
      if ! [ "[$prev" == "[$cur" ]; then
-       echo "Unfreezing "$cur"  "$(ps -p "$cur" -o comm=)""
        if  ps -p "$cur" >/dev/null 2>&1; then
-         kill -CONT "$cur"  >/dev/null 2>&1 
-         pgrep -P "$cur"  | while read F; do  kill -CONT "$F" >/dev/null 2>&1;done
+	cont_process "$cur" &
        fi
        prev=$cur
      fi
