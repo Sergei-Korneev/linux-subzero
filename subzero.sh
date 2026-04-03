@@ -17,7 +17,7 @@ cd "$DIR"
 
 
 prev="null"
-interval=0.2
+interval=0.4
 kill_interval=5
 exclusions=()
 
@@ -33,8 +33,8 @@ stop_all_async (){
         cmdline="$(ps -p "$1" -o comm= )"
         [[ "${exclusions[@]}" =~ "${cmdline}" ]] && return 0;
          echo "Stop all async "$1" "$cmdline""
-         kill -STOP "$1" >/dev/null 2>&1
 	 pgrep -P "$1" --signal STOP
+         kill -STOP "$1" >/dev/null 2>&1
        fi
      fi
 }
