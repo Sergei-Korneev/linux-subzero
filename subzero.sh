@@ -31,7 +31,6 @@ stop_all_async (){
         cmdline="$(ps -p "$1" -o comm= )"
         [[ "${exclusions[@]}" =~ "${cmdline}" ]] && return 0;
          echo "Stop all async "$1" "$cmdline""
-	 #pgrep -P "$1" --signal STOP
 	 pkill -P "$1" --signal STOP
          kill -STOP "$1" >/dev/null 2>&1
        fi
@@ -58,7 +57,6 @@ cont_process(){
         [[ "${exclusions[@]}" =~ "${cmdline}" ]] && return 0;
 	echo "Unfreezing "$1" "$(ps -p "$1" -o comm=)""
 	pkill -P "$1" --signal CONT >/dev/null 2>&1 
-	#pgrep -P "$1" --signal CONT >/dev/null 2>&1 
 	kill -CONT "$1"  >/dev/null 2>&1 
 }
 
