@@ -41,7 +41,7 @@ stop_spawned_async (){
      if [ -z "$1" ];then return 1;fi
 	sleep $kill_interval
 	cur="$(xdotool getwindowfocus getwindowpid)"
-	if  [ ! -z $cur ] && [ "$1" != "$cur" ]; then
+	if [ $? -eq 0 ] &&  [ ! -z $cur ] && [ "$1" != "$cur" ]; then
 	if  ps -p "$1" >/dev/null 2>&1; then
 		cmdline="$(ps -p "$1" -o comm= )"
 		[[ "${exclusions[@]}" =~ "${cmdline}" ]] && return 0;
