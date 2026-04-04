@@ -26,12 +26,13 @@ stop_all_async (){
      if [ -z "$1" ];then return 1;fi
 	sleep $kill_interval
      cur="$(xdotool getwindowfocus getwindowpid)"
-     if  [ "$1" != "$cur" ]; then
+     if  [ $? -eq 0 ] && [ ! -z $cur ] && [ "$1" != "$cur" ]; then
        if  ps -p "$1" >/dev/null 2>&1; then
         cmdline="$(ps -p "$1" -o comm= )"
         [[ "${exclusions[@]}" =~ "${cmdline}" ]] && return 0;
          echo "Stop all async "$1" "$cmdline""
-	 pgrep -P "$1" --signal STOP
+	 #pgrep -P "$1" --signal STOP
+	 pkill -P "$1" --signal STOP
          kill -STOP "$1" >/dev/null 2>&1
        fi
      fi
@@ -41,7 +42,7 @@ stop_spawned_async (){
      if [ -z "$1" ];then return 1;fi
 	sleep $kill_interval
 	cur="$(xdotool getwindowfocus getwindowpid)"
-	if [ "$1" != "$cur" ]; then
+	if  [ ! -z $cur ] && [ "$1" != "$cur" ]; then
 	if  ps -p "$1" >/dev/null 2>&1; then
 		cmdline="$(ps -p "$1" -o comm= )"
 		[[ "${exclusions[@]}" =~ "${cmdline}" ]] && return 0;
@@ -53,8 +54,11 @@ stop_spawned_async (){
 
 cont_process(){
 	if [ -z "$1" ];then return 1;fi
+        cmdline="$(ps -p "$1" -o comm= )"
+        [[ "${exclusions[@]}" =~ "${cmdline}" ]] && return 0;
 	echo "Unfreezing "$1" "$(ps -p "$1" -o comm=)""
-	pgrep -P "$1" --signal CONT >/dev/null 2>&1 
+	pkill -P "$1" --signal CONT >/dev/null 2>&1 
+	#pgrep -P "$1" --signal CONT >/dev/null 2>&1 
 	kill -CONT "$1"  >/dev/null 2>&1 
 }
 
@@ -70,7 +74,7 @@ set_exclusions $@
 while true 
    do 
      cur="$(xdotool getwindowfocus getwindowpid)"
-     if [ "$prev" != "$cur" ]; then
+     if   [ $? -eq 0 ] && [ ! -z $cur ] && [ "$prev" != "$cur" ]; then
 	cont_process "$cur" &
 	stop_all_async "$prev" &
        prev=$cur
@@ -86,7 +90,7 @@ set_exclusions $@
 while true 
    do 
      cur="$(xdotool getwindowfocus getwindowpid)"
-     if [ "$prev" != "$cur" ]; then
+     if  [ $? -eq 0 ] && [ "$prev" != "$cur" ]; then
 	cont_process "$cur" &
 	stop_spawned_async "$prev" &
        prev=$cur
@@ -102,7 +106,7 @@ unfreeze (){
 while true 
    do 
      cur="$(xdotool getwindowfocus getwindowpid)"
-     if [ "$prev" != "$cur" ]; then
+     if  [ $? -eq 0 ] && [ "$prev" != "$cur" ]; then
        if  ps -p "$cur" >/dev/null 2>&1; then
 	cont_process "$cur" &
        fi
